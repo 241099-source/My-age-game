@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎂 عشت كام يوم؟</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+  body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    color: white;
+  }
+  .container {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 25px;
+    padding: 35px 25px;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    text-align: center;
+  }
+  h1 { font-size: 24px; margin-bottom: 10px; }
+  .subtitle { opacity: 0.85; font-size: 14px; margin-bottom: 25px; }
+  input[type="date"] {
+    width: 100%;
+    padding: 15px;
+    font-size: 18px;
+    border: none;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    text-align: center;
+    background: rgba(255,255,255,0.95);
+    color: #333;
+  }
+  button {
+    width: 100%;
+    padding: 15px;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #f093fb, #f5576c);
+    color: white;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  button:active { transform: scale(0.97); }
+  #results { display: none; margin-top: 25px; text-align: right; }
+  .stat {
+    background: rgba(255,255,255,0.15);
+    border-radius: 15px;
+    padding: 15px 18px;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    animation: fadeIn 0.5s ease;
+  }
+  .stat .label { font-size: 15px; opacity: 0.9; }
+  .stat .value { font-size: 20px; font-weight: bold; color: #ffe66d; }
+  .big { background: linear-gradient(135deg, rgba(255,230,109,0.3), rgba(245,87,108,0.3)); }
+  .big .value { font-size: 26px; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .reset { background: rgba(255,255,255,0.25); margin-top: 10px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🎂 عشت كام يوم؟</h1>
+  <p class="subtitle">ادخل تاريخ ميلادك وشوف إحصائياتك</p>
+
+  <input type="date" id="birthdate">
+  <button onclick="calculate()">احسبلي 🚀</button>
+
+  <div id="results">
+    <div class="stat big">
+      <span class="label">🎉 عشت</span>
+      <span class="value" id="days">0 يوم</span>
+    </div>
+    <div class="stat big">
+      <span class="label">🎂 عيد ميلادك بعد</span>
+      <span class="value" id="nextBirthday">0 يوم</span>
+    </div>
+    <div class="stat">
+      <span class="label">💓 نبضات قلبك</span>
+      <span class="value" id="heartbeats">0</span>
+    </div>
+    <div class="stat">
+      <span class="label">⏱️ عشت بالتفصيل</span>
+      <span class="value" id="detailed">-</span>
+    </div>
+    <div class="stat">
+      <span class="label">🌙 عشت (شهور)</span>
+      <span class="value" id="months">0</span>
+    </div>
+    <div class="stat">
+      <span class="label">😴 نمت تقريباً</span>
+      <span class="value" id="sleep">0 ساعة</span>
+    </div>
+    <div class="stat">
+      <span class="label">🍽️ أكلت تقريباً</span>
+      <span class="value" id="meals">0 وجبة</span>
+    </div>
+    <div class="stat">
+      <span class="label">😂 ضحكت تقريباً</span>
+      <span class="value" id="laughs">0 مرة</span>
+    </div>
+
+    <button class="reset" onclick="reset()">جرّب تاريخ تاني 🔄</button>
+  </div>
+</div>
+
+<script>
+function calculate() {
+  const input = document.getElementById('birthdate').value;
+  if (!input) {
+    alert('من فضلك ادخل تاريخ ميلادك أول 😊');
+    return;
+  }
+
+  const birth = new Date(input);
+  const now = new Date();
+
+  if (birth > now) {
+    alert('تاريخ الميلاد لازم يكون في الماضي 😅');
+    return;
+  }
+
+  // فرق الميلي ثانية
+  const diffMs = now - birth;
+  const totalSeconds = Math.floor(diffMs / 1000);
+  const totalMinutes = Math.floor(totalSeconds / 60);
+  const totalHours = Math.floor(totalMinutes / 60);
+  const totalDays = Math.floor(totalHours / 24);
+
+  // نبضات القلب (متوسط 70 نبضة/دقيقة)
+  const heartbeats = Math.floor(totalMinutes * 70);
+
+  // حساب السنوات والشهور والأيام
+  let years = now.getFullYear() - birth.getFullYear();
+  let months = now.getMonth() - birth.getMonth();
+  let days = now.getDate() - birth.getDate();
+
+  if (days < 0) {
+    months--;
+    const lastMonth = new Date(now.getFullYear(), now.getMonth(), 0).getDate();
+    days += lastMonth;
+  }
+  if (months < 0) {
+    years--;
+    months += 12;
+  }
+
+  // باقي عيد الميلاد الجاي
+  let nextBday = new Date(now.getFullYear(), birth.getMonth(), birth.getDate());
+  if (nextBday < now) {
+    nextBday = new Date(now.getFullYear() + 1, birth.getMonth(), birth.getDate());
+  }
+  const daysToNext = Math.ceil((nextBday - now) / (1000 * 60 * 60 * 24));
+
+  // إحصائيات إضافية
+  const sleepHours = totalDays * 8;
+  const meals = totalDays * 3;
+  const laughs = totalDays * 15;
+
+  // عرض النتايج
+  document.getElementById('days').textContent = formatNumber(totalDays) + ' يوم';
+  document.getElementById('nextBirthday').textContent = daysToNext + ' يوم';
+  document.getElementById('heartbeats').textContent = formatNumber(heartbeats);
+  document.getElementById('detailed').textContent = 
+    `${years} سنة، ${months} شهر، ${days} يوم`;
+  document.getElementById('months').textContent = formatNumber(years * 12 + months);
+  document.getElementById('sleep').textContent = formatNumber(sleepHours) + ' ساعة';
+  document.getElementById('meals').textContent = formatNumber(meals) + ' وجبة';
+  document.getElementById('laughs').textContent = formatNumber(laughs) + ' مرة';
+
+  // عيد ميلاد النهاردة؟
+  if (daysToNext === 365 || daysToNext === 366 || 
+      (now.getDate() === birth.getDate() && now.getMonth() === birth.getMonth())) {
+    document.getElementById('nextBirthday').textContent = '🎉 النهاردة عيد ميلادك!';
+  }
+
+  document.getElementById('results').style.display = 'block';
+}
+
+function formatNumber(num) {
+  return num.toLocaleString('ar-EG');
+}
+
+function reset() {
+  document.getElementById('birthdate').value = '';
+  document.getElementById('results').style.display = 'none';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// لو دخل تاريخ Enter
+document.getElementById('birthdate').addEventListener('keypress', e => {
+  if (e.key === 'Enter') calculate();
+});
+</script>
+</body>
+</html>
